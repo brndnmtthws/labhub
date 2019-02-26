@@ -1,17 +1,9 @@
-// use crate::api::models::GitHub;
+use crate::api::models::github;
 use rocket::response::content;
 use rocket::Request;
 use rocket_contrib::json::Json;
-// mod models;
-
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct PushEvent {
-    name: String,
-    age: u8,
-    phones: Vec<String>,
-}
+mod models;
+use log::{info, trace, warn};
 
 #[derive(Debug, Responder)]
 #[response(status = 500, content_type = "json")]
@@ -20,12 +12,18 @@ pub struct ResponseError {
 }
 
 #[post("/events", format = "json", data = "<event>")]
-pub fn github_event(event: &Json<PushEvent>) -> Result<content::Json<String>, ResponseError> {
+pub fn github_event(
+    event: Json<github::PushEvent>,
+) -> Result<content::Json<String>, ResponseError> {
+    info!("{:?}", event.0);
     Ok(content::Json(json!({"hello":"hi"}).to_string()))
 }
 
 #[post("/events", format = "json", data = "<event>")]
-pub fn gitlab_event(event: &Json<PushEvent>) -> Result<content::Json<String>, ResponseError> {
+pub fn gitlab_event(
+    event: Json<github::PushEvent>,
+) -> Result<content::Json<String>, ResponseError> {
+    info!("{:?}", event.0);
     Ok(content::Json(json!({"hello":"hi"}).to_string()))
 }
 
