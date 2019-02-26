@@ -1,8 +1,5 @@
 // This file is auto-generated, do not edit.
-
-use serde::{Deserialize, Serialize};
-
-{% for key, value in structs.items() -%}
+{% for key, value in structs.items() %}
 #[derive(Serialize, Deserialize, Debug)]
 pub struct {{ key }} {
 {%- for field in value %}

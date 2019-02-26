@@ -21,6 +21,7 @@ serde_json = "1.0"
 serde_derive = "1.0"
 gitlab = "0.1104"
 git2 = "0.8"
+chrono = { version = "0.4", features = ["serde"] }
 github-rs = { git = "https://github.com/mgattozzi/github-rs.git" }
 
 [dependencies.rocket_contrib]

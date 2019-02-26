@@ -602,6 +602,7 @@ dependencies = [
 name = "labhub"
 version = "0.1.0"
 dependencies = [
+ "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "github-rs 0.6.1 (git+https://github.com/mgattozzi/github-rs.git)",
  "gitlab 0.1104.1 (registry+https://github.com/rust-lang/crates.io-index)",
