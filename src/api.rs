@@ -13,7 +13,7 @@ pub struct ResponseError {
 
 #[post("/events", format = "json", data = "<event>")]
 pub fn github_event(
-    event: Json<github::PushEvent>,
+    event: Json<github::WebhookEvent>,
 ) -> Result<content::Json<String>, ResponseError> {
     info!("{:?}", event.0);
     Ok(content::Json(json!({"hello":"hi"}).to_string()))
@@ -21,7 +21,7 @@ pub fn github_event(
 
 #[post("/events", format = "json", data = "<event>")]
 pub fn gitlab_event(
-    event: Json<github::PushEvent>,
+    event: Json<github::WebhookEvent>,
 ) -> Result<content::Json<String>, ResponseError> {
     info!("{:?}", event.0);
     Ok(content::Json(json!({"hello":"hi"}).to_string()))
