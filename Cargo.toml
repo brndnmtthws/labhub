@@ -15,13 +15,12 @@ travis-ci = { repository = "brndnmtthws/labhub", branch = "master" }
 
 [dependencies]
 rocket = "0.4"
-bufstream = "0.1"
-serde_derive = "1.0"
-serde_json = "1.0"
 serde = "1.0"
-gitlab = "0.1104"
-git2 = "0.8"
-github-rs = { git = "https://github.com/mgattozzi/github-rs.git" }
+serde_json = "1.0"
+serde_derive = "1.0"
+# gitlab = "0.1104"
+# git2 = "0.8"
+# github-rs = { git = "https://github.com/mgattozzi/github-rs.git" }
 
 [dependencies.rocket_contrib]
 version = "0.4"
