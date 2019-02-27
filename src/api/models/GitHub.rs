@@ -187,8 +187,7 @@ pub struct Push {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PushCommit {
-}
+pub struct PushCommit {}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PushCommitCommit {
