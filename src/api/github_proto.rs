@@ -6,7 +6,6 @@ use rocket::Outcome;
 pub enum RequestError {
     BadCount,
     Missing,
-    // Invalid,
 }
 
 pub struct XGitHubEvent(pub String);

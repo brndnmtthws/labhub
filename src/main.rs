@@ -9,17 +9,18 @@ extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
 
-mod service;
 mod api;
+mod config;
+mod service;
 
 fn main() {
     rocket::ignite()
-        .mount("/github", routes![api::github_event])
-        .mount("/gitlab", routes![api::gitlab_event])
+        .mount("/github", routes![service::github_event])
+        .mount("/gitlab", routes![service::gitlab_event])
         .register(catchers![
-            api::not_found,
-            api::internal_server_error,
-            api::unprocessable_entity
+            service::not_found,
+            service::internal_server_error,
+            service::unprocessable_entity
         ])
         .launch();
 }
