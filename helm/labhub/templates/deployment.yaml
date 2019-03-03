@@ -24,14 +24,17 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: GITHUB_SSH_KEY
-              value: /etc/ssh-keys/github
-            - name: GITLAB_SSH_KEY
-              value: /etc/ssh-keys/gitlab
-            {{- toYaml .Values.envVars | nindent 12 }}
+            - name: LABHUB_TOML
+              value: "/etc/labhub/LabHub.toml"
+            {{- with .Values.envVars }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
           volumeMounts:
             - name: ssh-keys
               mountPath: "/etc/ssh-keys"
+              readOnly: true
+            - name: labhub
+              mountPath: "/etc/labhub"
               readOnly: true
           ports:
             - name: http
@@ -51,6 +54,9 @@ spec:
         - name: ssh-keys
           secret:
             secretName: ssh-keys
+        - name: labhub
+          configMap:
+            name: {{ template "labhub.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

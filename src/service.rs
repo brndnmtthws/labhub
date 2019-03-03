@@ -32,7 +32,11 @@ pub fn github_event(
         .read_to_string(&mut body)?;
 
     // Check X-Hub-Signature
-    github_signature::check_signature(&config::GITHUB_WEBHOOK_SECRET, &signature.0, &body)?;
+    github_signature::check_signature(
+        &config::CONFIG.github.webhook_secret.clone(),
+        &signature.0,
+        &body,
+    )?;
 
     // Handle the event
     Ok(content::Json(github::handle_event_body(

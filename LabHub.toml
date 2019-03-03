@@ -1,0 +1,22 @@
+# List of enabled features. At the moment there's only one, so this parameter
+# does nothing. :)
+features = [
+    "external-pr",
+]
+
+# Settings for GitHub
+[github]
+webhook_secret = "secret"
+username = "ci-user"
+ssh_key = "/path/to/labhub-key.ecdsa"
+
+# Settings for GitLab
+[gitlab]
+webhook_secret = "secret"
+username = "ci-user"
+ssh_key = "/path/to/labhub-key.ecdsa"
+
+# List of mappings to/from GitHub & GitLab
+[[mappings]]
+github_repo = "brndnmtthws/labhub"
+gitlab_repo = "brndnmtthws-oss/labhub"

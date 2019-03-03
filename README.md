@@ -28,25 +28,7 @@ Using LabHub? Please open a PR to add yourself here! 😀
 
 ## Configuration
 
-Configuration is accomplished using environment variables. For details, see [src/config.rs](src/config.rs). An example configuration might look like this:
-
-```shell
-# A pair of repo mappings from GitHub to GitLab. Format is `github1=gitlab1,github2=gitlab2,...`
-export LABHUB_MAPPINGS=brndnmtthws/labhub=brndnmtthws-oss/labhub,brndnmtthws/conky=brndnmtthws-oss/conky,brndnmtthws/labhub-test=brndnmtthws-oss/labhub-test
-
-# GitHub settings
-export GITHUB_WEBHOOK_SECRET=secret
-export GITHUB_USERNAME=conky-ci
-export GITHUB_SSH_KEY=/home/conky-ci/.ssh/labhub-key.ecdsa
-
-# GitLab settings
-export GITLAB_WEBHOOK_SECRET=secret
-export GITLAB_USERNAME=conky-ci
-export GITLAB_SSH_KEY=/home/conky-ci/.ssh/labhub-key.ecdsa
-
-# Logger settings
-export RUST_LOG=labhub=info
-```
+LabHub is configured using [`LabHub.toml`](LabHub.toml). For details, see [src/config.rs](src/config.rs). You can specify the path to `LabHub.toml` by setting the `LABHUB_TOML` environment variable.
 
 ## Deployment
 

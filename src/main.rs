@@ -9,6 +9,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
 extern crate futures;
+extern crate toml;
 
 mod api;
 mod config;
@@ -24,7 +25,7 @@ fn main() {
     let rocket = rocket::ignite();
 
     info!("✨ May your hopes and dreams become reality ✨");
-    config::print();
+    config::load_config();
 
     rocket
         .mount("/github", routes![service::github_event])

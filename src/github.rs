@@ -38,15 +38,15 @@ fn get_gitlab_repo_name(github_repo_full_name: &str) -> String {
     }
 }
 
-fn get_remote_callbacks<'a>() -> RemoteCallbacks<'a> {
+fn get_remote_callbacks(site: &config::Site) -> RemoteCallbacks {
     let mut remote_callbacks = RemoteCallbacks::new();
-    remote_callbacks.credentials(|_user, _user_from_url, cred| {
+    let ssh_key = site.ssh_key.clone();
+    remote_callbacks.credentials(move |_user, _user_from_url, cred| {
         debug!("Entered Git credential callback, cred={:?}", cred);
         if cred.contains(git2::CredentialType::USERNAME) {
             git2::Cred::username(&"git".to_string())
         } else {
-            let github_ssh_key = config::GITHUB_SSH_KEY.to_string();
-            let path = Path::new(&github_ssh_key);
+            let path = Path::new(&ssh_key);
             git2::Cred::ssh_key(&"git".to_string(), None, &path, None)
         }
     });
@@ -163,7 +163,7 @@ impl RepositoryExt for Repository {
         let mut remote = self.find_remote(&pr_handle.github_remote)?;
 
         let mut fetch_options = FetchOptions::new();
-        fetch_options.remote_callbacks(get_remote_callbacks());
+        fetch_options.remote_callbacks(get_remote_callbacks(&config::CONFIG.github));
 
         remote.fetch(&[&pr_handle.gitref], Some(&mut fetch_options), None)?;
 
@@ -196,7 +196,7 @@ impl RepositoryExt for Repository {
         );
         let mut gitremote = self.find_remote(&pr_handle.gitlab_remote)?;
         let mut push_options = PushOptions::new();
-        push_options.remote_callbacks(get_remote_callbacks());
+        push_options.remote_callbacks(get_remote_callbacks(&config::CONFIG.gitlab));
 
         let refspec = format!(
             "refs/heads/pr-{}/{}/{}:refs/heads/pr-{}/{}/{}",
@@ -223,7 +223,7 @@ impl RepositoryExt for Repository {
         );
         let mut gitremote = self.find_remote(&pr_handle.gitlab_remote)?;
         let mut push_options = PushOptions::new();
-        push_options.remote_callbacks(get_remote_callbacks());
+        push_options.remote_callbacks(get_remote_callbacks(&config::CONFIG.gitlab));
 
         let refspec = format!(
             ":refs/heads/pr-{}/{}/{}",
@@ -239,7 +239,7 @@ impl RepositoryExt for Repository {
 fn clone_repo(url: &str) -> Result<RepoData, GitError> {
     // Setup fetch options
     let mut fetch_options = FetchOptions::new();
-    fetch_options.remote_callbacks(get_remote_callbacks());
+    fetch_options.remote_callbacks(get_remote_callbacks(&config::CONFIG.github));
 
     // Initialize & clone repo
     let mut builder = RepoBuilder::new();

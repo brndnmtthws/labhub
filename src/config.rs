@@ -2,103 +2,89 @@
 use log::info;
 use std::collections::HashMap;
 use std::env;
+use std::fs::File;
+use std::io::prelude::*;
 use std::sync::Mutex;
+use toml;
 use yansi::Paint;
 
-lazy_static! {
-    pub static ref GITHUB_WEBHOOK_SECRET: String =
-        env::var("GITHUB_WEBHOOK_SECRET").unwrap_or_else(|_| "github_webhook_secret".to_string());
+#[derive(Debug, Deserialize)]
+pub struct Config {
+    pub github: Site,
+    pub gitlab: Site,
+    pub mappings: Vec<Mapping>,
+    pub features: Vec<String>,
 }
 
-lazy_static! {
-    pub static ref GITHUB_USERNAME: String =
-        env::var("GITHUB_USERNAME").unwrap_or_else(|_| "labhub".to_string());
+#[derive(Debug, Deserialize)]
+pub struct Site {
+    pub webhook_secret: String,
+    pub username: String,
+    pub ssh_key: String,
 }
 
-lazy_static! {
-    pub static ref GITHUB_SSH_KEY: String =
-        env::var("GITHUB_SSH_KEY").unwrap_or_else(|_| "/path/to/id_rsa".to_string());
-}
-
-lazy_static! {
-    pub static ref GITLAB_WEBHOOK_SECRET: String =
-        env::var("GITLAB_WEBHOOK_SECRET").unwrap_or_else(|_| "gitlab_webhook_secret".to_string());
-}
-
-lazy_static! {
-    pub static ref GITLAB_USERNAME: String =
-        env::var("GITLAB_USERNAME").unwrap_or_else(|_| "labhub".to_string());
-}
-
-lazy_static! {
-    pub static ref GITLAB_SSH_KEY: String =
-        env::var("GITLAB_SSH_KEY").unwrap_or_else(|_| "/path/to/id_rsa".to_string());
-}
-
-fn insert_mappings_into_map<F>(insert: F) -> Mutex<HashMap<String, String>>
-where
-    F: Fn(&mut HashMap<String, String>, String, String),
-{
-    let mut m: HashMap<String, String> = HashMap::new();
-    let mappings = env::var("LABHUB_MAPPINGS").unwrap_or_else(|_| "".to_string());
-    let mapping_pairs: Vec<&str> = mappings.split(',').collect();
-    for pair in mapping_pairs {
-        let parts: Vec<&str> = pair.split('=').collect();
-        if let 2 = parts.len() {
-            insert(&mut m, parts[0].to_string(), parts[1].to_string());
-        }
-    }
-    Mutex::new(m)
+#[derive(Debug, Deserialize)]
+pub struct Mapping {
+    pub github_repo: String,
+    pub gitlab_repo: String,
 }
 
 lazy_static! {
     pub static ref HUB_TO_LAB: Mutex<HashMap<String, String>> = {
-        insert_mappings_into_map(|m, part1, part2| {
-            m.insert(part1, part2);
-        })
+        let m: HashMap<String, String> = HashMap::new();
+        Mutex::new(m)
     };
 }
 
 lazy_static! {
     pub static ref LAB_TO_HUB: Mutex<HashMap<String, String>> = {
-        insert_mappings_into_map(|m, part1, part2| {
-            m.insert(part2, part1);
-        })
+        let m: HashMap<String, String> = HashMap::new();
+        Mutex::new(m)
     };
 }
 
-pub fn print() {
-    info!("Loading LabHub configuration values from environment");
+fn get_labhub_toml_path() -> String {
+    env::var("LABHUB_TOML").unwrap_or_else(|_| "LabHub.toml".to_string())
+}
+
+lazy_static! {
+    pub static ref CONFIG: Config = {
+        let labhub_toml_path = get_labhub_toml_path();
+        let config: Config = toml::from_str(&read_file_to_string(&labhub_toml_path)).unwrap();
+        config
+    };
+}
+
+fn read_file_to_string(filename: &str) -> String {
+    let mut file = File::open(filename).expect("Unable to open the file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)
+        .expect("Unable to read the file");
+    contents
+}
+
+pub fn load_config() {
     info!(
-        "❓ GITHUB_WEBHOOK_SECRET ====> {}",
-        Paint::red(&*GITHUB_WEBHOOK_SECRET)
+        "Loaded LabHub configuration values from {}",
+        get_labhub_toml_path()
+    );
+    info!("CONFIG => {:#?}", Paint::red(&*CONFIG));
+
+    for mapping in CONFIG.mappings.iter() {
+        let mut hub_to_lab_lock = HUB_TO_LAB.lock();
+        let hub_to_lab = hub_to_lab_lock.as_mut().unwrap();
+        hub_to_lab.insert(mapping.github_repo.clone(), mapping.gitlab_repo.clone());
+
+        let mut lab_to_hub_lock = LAB_TO_HUB.lock();
+        let lab_to_hub = lab_to_hub_lock.as_mut().unwrap();
+        lab_to_hub.insert(mapping.gitlab_repo.clone(), mapping.github_repo.clone());
+    }
+    info!(
+        "HUB_TO_LAB => {:#?}",
+        Paint::red(HUB_TO_LAB.lock().unwrap())
     );
     info!(
-        "❓ GITHUB_USERNAME ==========> {}",
-        Paint::red(&*GITHUB_USERNAME)
-    );
-    info!(
-        "❓ GITHUB_SSH_KEY ===========> {}",
-        Paint::red(&*GITHUB_SSH_KEY)
-    );
-    info!(
-        "❓ GITLAB_WEBHOOK_SECRET ====> {}",
-        Paint::red(&*GITLAB_WEBHOOK_SECRET)
-    );
-    info!(
-        "❓ GITLAB_USERNAME ==========> {}",
-        Paint::red(&*GITLAB_USERNAME)
-    );
-    info!(
-        "❓ GITLAB_SSH_KEY ===========> {}",
-        Paint::red(&*GITLAB_SSH_KEY)
-    );
-    info!(
-        "❓ HUB_TO_LAB => {:#?}",
-        Paint::red(&*HUB_TO_LAB.lock().unwrap())
-    );
-    info!(
-        "❓ LAB_TO_HUB => {:#?}",
-        Paint::red(&*LAB_TO_HUB.lock().unwrap())
+        "LAB_TO_HUB => {:#?}",
+        Paint::red(LAB_TO_HUB.lock().unwrap())
     );
 }

@@ -48,14 +48,28 @@ tolerations: []
 
 affinity: {}
 
-envVars:
-  - name: LABHUB_MAPPINGS
-    value: brndnmtthws/labhub=brndnmtthws-oss/labhub,brndnmtthws/conky=brndnmtthws-oss/conky
-  - name: GITHUB_WEBHOOK_SECRET
-    value: secret
-  - name: GITHUB_USERNAME
-    value: ci-user
-  - name: GITLAB_WEBHOOK_SECRET
-    value: secret
-  - name: GITLAB_USERNAME
-    value: ci-user
+envVars: {}
+
+labhub_toml: |
+  # List of enabled features. At the moment there's only one, so this parameter
+  # does nothing. :)
+  features = [
+      "external-pr",
+  ]
+
+  # Settings for GitHub
+  [github]
+  webhook_secret = "secret"
+  username = "ci-user"
+  ssh_key = "/etc/ssh-keys/github"
+
+  # Settings for GitLab
+  [gitlab]
+  webhook_secret = "secret"
+  username = "ci-user"
+  ssh_key = "/etc/ssh-keys/gitlab"
+
+  # List of mappings to/from GitHub & GitLab
+  [[mappings]]
+  github_repo = "brndnmtthws/labhub"
+  gitlab_repo = "brndnmtthws-oss/labhub"
