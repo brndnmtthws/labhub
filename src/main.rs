@@ -29,6 +29,7 @@ fn main() {
     rocket
         .mount("/github", routes![service::github_event])
         .mount("/gitlab", routes![service::gitlab_event])
+        .mount("/", routes![service::check])
         .register(catchers![
             errors::not_found,
             errors::internal_server_error,

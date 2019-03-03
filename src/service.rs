@@ -11,6 +11,11 @@ use std::io::Read;
 
 const MAX_BODY_LENGTH: u64 = 10 * 1024 * 1024;
 
+#[get("/check")]
+pub fn check() -> &'static str {
+    "ok"
+}
+
 #[post("/events", format = "json", data = "<body_data>")]
 pub fn github_event(
     body_data: Data,
