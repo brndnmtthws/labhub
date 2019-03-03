@@ -1,0 +1,40 @@
+[package]
+authors = ["Brenden Matthews <brenden@diddyinc.com>"]
+categories = ["development-tools", "development-tools::build-utils"]
+description = "Bot for running builds against GitHub with GitLab CI"
+edition = "2018"
+keywords = ["github", "gitlab", "ci", "restful", "rest-api"]
+license = "Unlicense"
+name = "labhub"
+readme = "README.md"
+repository = "https://github.com/brndnmtthws/labhub"
+version = "0.1.0"
+
+[badges]
+travis-ci = { repository = "brndnmtthws/labhub", branch = "master" }
+
+[dependencies]
+yansi = "0.5"
+futures = "0.1"
+git2 = "0.8"
+# github-rs = { git = "https://github.com/mgattozzi/github-rs.git" }
+# gitlab = "0.1104"
+hex = "0.3"
+lazy_static = "1.3"
+log = "0.4"
+ring = "0.13"
+rocket = "0.4"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+tempfile = "3.0"
+
+[dependencies.rocket_contrib]
+default-features = false
+features = ["json"]
+version = "0.4"
+
+[dev-dependencies]
+mockers = "0.13"
+mockers_derive = "0.13"
+env_logger = { version = "0.6", default-features = false }

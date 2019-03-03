@@ -1,0 +1,7 @@
+/target
+**/*.rs.bk
+
+.env
+
+# Ignore IDE files
+.vscode/

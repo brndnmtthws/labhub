@@ -1,0 +1,9 @@
+// This file is auto-generated, do not edit.
+{% for key, value in structs.items() %}
+#[derive(Serialize, Deserialize, Debug)]
+pub struct {{ key }} {
+{%- for field in value %}
+    {{ field }}
+{%- endfor %}
+}
+{% endfor %}

@@ -1,0 +1,60 @@
+language: rust
+rust:
+  - stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: stable
+    - rust: beta
+  fast_finish: true
+  include:
+    - env: TARGET=x86_64-unknown-linux-gnu
+      rust: nightly
+    - env: TARGET=x86_64-unknown-linux-musl
+      rust: nightly
+    - env: TARGET=x86_64-apple-darwin
+      rust: nightly
+      os: osx
+    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=x86_64-pc-windows-gnu
+      rust: nightly
+cache: cargo
+before_cache: |
+  chmod -R a+r $HOME/.cargo
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
+  fi
+before_script:
+  - rustup component add rustfmt
+  - rustup component add clippy
+script:
+  - cargo fmt --all -- --check
+  - cargo clippy --all-targets --all-features -- -D warnings
+  - cargo build --verbose --all
+  - cargo test --verbose --all
+after_success: |
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+  fi
+deploy:
+  - provider: cargo
+    on:
+      tags: true
+    token:
+      secure: ggP0XSIFqRO2P+H/lao8KzMOoy21lKRkEZZfIbffMhKiKSlWBoiptffBES8uCJj1zhZciXP7R7dQsqYGIAdeuZZcouvz9B/iFEn6N99nmKN135LeMWo0TUrXWFquY9e0ysE3ypRdm4qOJ0yltxJvEKkIFK8kPDsyjWOHxsIe8AY0BxMEjELNp1mPe9IQmTR4s5Hp+DRUzwbp9DpeFOZuwTV2opCVib8F7zSxVNBgmFk4xyTQ+ygSRHn2Rfy0DjDL3HBNYNCSaYSESprRtsW/ic+xn2vfbmAxe/YaCm8b7neAJQN25g2ZpIJY52qkLtghxU1bzE+DMGRKSuY/boJprNAnjjhmsCR/hSZRa56GESsBnw9m6CNufNZzVm2BiM0PFk+AHf7rWvcED6LUqpdfbWe+bMVIubBgSADidTyBdBQqTBxTaHX7EHNkU9rPcxdv8SEALFUEaRSuAS0bD8AeTWP4DRmF7XRdTJeKTo4dSpX6FMjDSNN+PwmD+m08fior+uMYkxCb3jahby8gspkwvk3UFql3tYWAToTYs3wpbzSeta3pWhOK0xvVAU+vCYZFxUhDBkR1XXiME6Z/A66UHcLwbuO5f4ab784kM4+5aorZQLo4f3zcBm8GT67mlSmBoB6AooFUt/dKP/fxbE1l9elhSCbtLKb+duGvd4tLwt0=
+  - provider: releases
+    api_key:
+      secure: QRhoIcm41Km31/pkZX2nX0lQvc6z5HADGLmv9+TKYE922hXn31p1vsEkWt+7mKvzzivvNRLa+5f5mvquhOMdfXcZaFiyDW2Bil4/CO4HqMbXomPJCEEqa2dk5PtCoTIegV25WkiPUXmxiyVQE6q+q+3HA2V1IALwuX9Tj9zRuPItHtrrA02Lbh0DWhOkcTg6Ea2e/eVij9qPqcpGWSAZiNWFVkMKAFfnnhk4CqD6z4N/fhU4OQMtdrlihfv1t4Dp6ewyiZIrGe5l5IwPKbMlX7xyhbPcTyt/DjLPXsuH1Yt4cDxm6Lhh4Y/rUuwoMtPzB5AoiTtvFBWZ3QRJPWSduYG96t1qzRd4xvTaB7eckrJksRZr9iZvXpa2hbQ2CMAbIvJLESf+EheBKYqZrQULRTyS2BNVT5A1M719nhVB33tuMzkjWr4RxXH1/Zlyyf+5t3ELQ1D5uAdeoCE6ieDM3YA59rDNqFNH1Gs9VJFte+jiQLT8mWJ8GcloJl/+bM9aerFRJXyttk3ZhWDCgHnUKXCpmztGVPAwYvd2Bnrhc9I4JQ7RGVKo8NgPQ2EJ3Hygf5kvn6l/w37NsyiDgpePFatz77gHUl4TY8XTC8fQrWQcemZhWtUNC71MyAE0HVA+tcf5m7fwjDBeNLCPt+nq8qGCDPqONbV1PtjfSrt68fQ=
+    file_glob: true
+    file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+    on:
+      tags: true
+    skip_cleanup: true
+addons:
+  apt:
+    packages:
+      - libssl-dev
