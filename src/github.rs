@@ -16,6 +16,7 @@ use mockers_derive::mocked;
 
 struct RepoData {
     repo: Repository,
+    #[allow(dead_code)]
     dir: TempDir,
 }
 
@@ -267,7 +268,7 @@ fn clone_repo(url: &str) -> Result<RepoData, GitError> {
 
 fn handle_pr_closed(pr: &github::PullRequest) -> Result<String, GitError> {
     info!("Handling closed PR");
-    let pr_handle = PrHandle::new(pr)?;
+    let _pr_handle = PrHandle::new(pr)?;
 
     Ok(String::from(":D"))
 }
@@ -351,11 +352,11 @@ pub fn handle_event_body(event_type: &str, body: &str) -> Result<String, Request
 mod test {
     use super::*;
     use crate::testing::{read_testdata_to_string, run_test};
-    use mockers::Scenario;
+    // use mockers::Scenario;
     #[test]
     fn open_pr() {
         run_test(|| {
-            info!("reopen_pr test");
+            info!("open_pr test");
             let pr: github::PullRequest =
                 serde_json::from_str(&read_testdata_to_string("github_open_pull_request.json"))
                     .unwrap();
@@ -395,7 +396,7 @@ mod test {
     #[test]
     fn open_pr_fork() {
         run_test(|| {
-            info!("reopen_pr test");
+            info!("open_pr_fork test");
             let pr: github::PullRequest =
                 serde_json::from_str(&read_testdata_to_string("github_open_pr_forked.json"))
                     .unwrap();
