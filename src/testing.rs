@@ -16,7 +16,7 @@ pub fn read_testdata_to_string(filename: &str) -> String {
 }
 
 fn setup() {
-    env_logger::init();
+    env_logger::try_init();
 }
 
 pub fn run_test<T>(test: T)
