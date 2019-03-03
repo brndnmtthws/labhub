@@ -48,7 +48,7 @@ Be sure to switch back to `stable` with `rustup default stable` if that's your p
 
 LabHub is configured using [`LabHub.toml`](LabHub.toml). For details, see [src/config.rs](src/config.rs). You can specify the path to `LabHub.toml` by setting the `LABHUB_TOML` environment variable.
 
-## Deployment
+## 🚀 Deployment
 
 ### Setup Webhooks
 
