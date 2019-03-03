@@ -1,6 +1,6 @@
 [![pipeline status](https://gitlab.com/brndnmtthws-oss/labhub/badges/master/pipeline.svg)](https://gitlab.com/brndnmtthws-oss/labhub/commits/master) [![Build Status](https://travis-ci.org/brndnmtthws/labhub.svg?branch=master)](https://travis-ci.org/brndnmtthws/labhub) [![Coverage Status](https://coveralls.io/repos/github/brndnmtthws/labhub/badge.svg)](https://coveralls.io/github/brndnmtthws/labhub)
 
-# LabHub 🤖
+# 🤖 LabHub
 
 A GitHub bot written in Rust for using GitLab CI in OSS projects.
 
@@ -12,13 +12,13 @@ A GitHub bot written in Rust for using GitLab CI in OSS projects.
 
 ## The Problem
 
-GitLab has a great CI system, however it's not suitable for open source projects 😧 (at the time of writing) because it won't build external PRs by default.
+GitLab has a great CI system, however it's not suitable for open source projects 😧 (at the time of writing) because it won't build external PRs by default. There are security concerns about the risk of exposing secrets in external builds, and GitLab errs on the side of caution by not building external PRs by default.
 
 For more details on the issue, [please take a look at this GitLab discussion](https://gitlab.com/gitlab-org/gitlab-ee/issues/5667).
 
 ## The Solution
 
-LabHub listens for webhooks from GitHub to notify for new pull requests. If the PR is from a forked repo, it will push a branch to GitLab (for the corresponding PR) to test the build.
+If you're not concerned with leaking secrets, then LabHub may be for you! LabHub listens for webhooks from GitHub to notify for new pull requests. If the PR is from a forked repo, it will push a branch to GitLab (for the corresponding PR) to test the build.
 
 ## In Action
 
@@ -46,7 +46,7 @@ Example:
 
 <a href="docs/github-webhook-config.png"><img src="docs/github-webhook-config.png" alt="GitHub webhook config" height="400px"></a>
 
-### Create SSH keys
+### 🔑 Create SSH keys
 
 You'll need a CI user with SSH keys for both GitHub and GitLab. Create an account on both sites (if you don't already have a CI user), and create an SSH key for LabHub:
 
@@ -56,7 +56,7 @@ $ ssh-keygen -f labhub-key.ecdsa -t ecdsa -b 521
 
 Keep `labhub-key.ecdsa` safe, and upload `labhub-key.ecdsa.pub` to both GitHub and GitLab for the CI user.
 
-### Deploy with Helm ☸️
+### ☸️ Deploy to Kubernetes with Helm
 
 There's a Helm chart included in this repo, which is the preferred method of deployment. To use you, you must first create the SSH key secrets with kubectl. Assuming your SSH private key is `labhub-key.ecdsa`:
 
