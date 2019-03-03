@@ -56,13 +56,10 @@ You'll need to set up webhooks for any repo you wish to enable LabHub for. Curre
 
 Configure the webhook to send PR and push events.
 
-- Set the payload URL such that it ends in `/github/events`, which is the path LabHub is expecting.
+- Set the payload URL path to `/github/events`, which is the path LabHub is expecting for GitHub events.
 - Create a secrete (ex: `cat /dev/urandom | LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`) and set the same value in the webhook config as in LabHub.
 - Make sure the payload type is `application/json`.
-
-Example:
-
-<a href="docs/github-webhook-config.png"><img src="docs/github-webhook-config.png" alt="GitHub webhook config" height="400px"></a>
+- [Here's how your webhook should look](docs/github-webhook-config.png)
 
 ### 🔑 Create SSH keys
 
@@ -89,6 +86,6 @@ Once you have the secrets, install the helm chart from [helm/labhub/](helm/labhu
 ```ShellSession
 $ cd helm/labhub/
 $ cp values.yaml myvalues.yaml
-# Edit myvalues.yaml to your liking
+### Edit myvalues.yaml to your liking ###
 $ helm upgrade --install labhub . -f myvalues.yaml
 ```
