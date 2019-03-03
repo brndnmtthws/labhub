@@ -4,7 +4,7 @@
 
 A GitHub bot written in Rust for using GitLab CI in OSS projects.
 
-## Features
+## ✔️ Features
 
 - Listens for webhooks from GitHub
 - Pushes new branches to GitLab for external (forked) PRs
@@ -14,17 +14,17 @@ Not implemented:
 
 - No periodic reconciling of GitLab branches with open PRs: if a webhook is missed for any reason, the GitLab pipeline may not correctly reflect the PR state
 
-## The Problem
+## ⁉️ The Problem
 
 GitLab has a great CI system, however it's not suitable for open source projects 😧 (at the time of writing) because it won't build external PRs by default. There are security concerns about the risk of exposing secrets in external builds, and GitLab errs on the side of caution by not building external PRs by default.
 
 For more details on the issue, [please take a look at this GitLab discussion](https://gitlab.com/gitlab-org/gitlab-ee/issues/5667).
 
-## The Solution
+## ✨ The Solution
 
 If you're not concerned with leaking secrets, then LabHub may be for you! LabHub listens for webhooks from GitHub to notify for new pull requests. If the PR is from a forked repo, it will push a branch to GitLab (for the corresponding PR) to test the build.
 
-## In Action
+## 🏃‍♀️ In Action
 
 **Using LabHub? Open a PR to add your project here! 😀**
 
@@ -32,7 +32,7 @@ LabHub is currently being used by the following projects:
 
 - [Conky](https://github.com/brndnmtthws/conky)
 
-## Compiling
+## 🖥 Compiling
 
 LabHub requires Rust nightly. To compile using [`rustup`](https://rustup.rs/):
 
@@ -44,13 +44,13 @@ $ cargo build
 
 Be sure to switch back to `stable` with `rustup default stable` if that's your preferred toolchain.
 
-## Configuration
+## 🎛 Configuration
 
 LabHub is configured using [`LabHub.toml`](LabHub.toml). For details, see [src/config.rs](src/config.rs). You can specify the path to `LabHub.toml` by setting the `LABHUB_TOML` environment variable.
 
 ## 🚀 Deployment
 
-### Setup Webhooks
+### ↩ Setup Webhooks
 
 You'll need to set up webhooks for any repo you wish to enable LabHub for. Currently, only GitHub webhooks are required. To get started, go to `github.com/<org>/<repo>/settings/hooks` and add a new webhook.
 
