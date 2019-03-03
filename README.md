@@ -22,9 +22,11 @@ If you're not concerned with leaking secrets, then LabHub may be for you! LabHub
 
 ## In Action
 
-LabHub is currently being used by the [Conky](https://github.com/brndnmtthws/conky) project.
+**Using LabHub? Open a PR to add your project here! 😀**
 
-Using LabHub? Please open a PR to add yourself here! 😀
+LabHub is currently being used by the following projects:
+
+- [Conky](https://github.com/brndnmtthws/conky)
 
 ## Configuration
 
