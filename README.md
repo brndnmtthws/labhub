@@ -32,6 +32,18 @@ LabHub is currently being used by the following projects:
 
 - [Conky](https://github.com/brndnmtthws/conky)
 
+## Compiling
+
+LabHub requires Rust nightly. To compile using [`rustup`](https://rustup.rs/):
+
+```ShellSession
+$ rustup toolchain install nightly
+$ rustup default nightly
+$ cargo build
+```
+
+Be sure to switch back to `stable` with `rustup default stable` if that's your preferred toolchain.
+
 ## Configuration
 
 LabHub is configured using [`LabHub.toml`](LabHub.toml). For details, see [src/config.rs](src/config.rs). You can specify the path to `LabHub.toml` by setting the `LABHUB_TOML` environment variable.
