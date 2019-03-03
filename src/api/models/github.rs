@@ -433,7 +433,7 @@ pub struct PullRequestPullRequest {
     pub mergeable: Option<bool>,
     pub rebaseable: Option<bool>,
     pub mergeable_state: Option<String>,
-    pub merged_by: Option<String>,
+    pub merged_by: Option<PullRequestPullRequestMergedBy>,
     pub comments: Option<i64>,
     pub review_comments: Option<i64>,
     pub maintainer_can_modify: Option<bool>,
@@ -799,6 +799,29 @@ pub struct PullRequestPullRequestLinksCommits {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PullRequestPullRequestLinksStatuses {
     pub href: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PullRequestPullRequestMergedBy {
+    pub login: Option<String>,
+    pub id: Option<i64>,
+    pub node_id: Option<String>,
+    pub avatar_url: Option<String>,
+    pub gravatar_id: Option<String>,
+    pub url: Option<String>,
+    pub html_url: Option<String>,
+    pub followers_url: Option<String>,
+    pub following_url: Option<String>,
+    pub gists_url: Option<String>,
+    pub starred_url: Option<String>,
+    pub subscriptions_url: Option<String>,
+    pub organizations_url: Option<String>,
+    pub repos_url: Option<String>,
+    pub events_url: Option<String>,
+    pub received_events_url: Option<String>,
+    #[serde(rename = "type")]
+    pub type_key: Option<String>,
+    pub site_admin: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

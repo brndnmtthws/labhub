@@ -401,4 +401,15 @@ mod test {
             let _pr_handle = PrHandle::new(&pr).unwrap();
         });
     }
+
+    #[test]
+    fn close_pr_fork() {
+        run_test(|| {
+            info!("close_pr_fork test");
+            let pr: github::PullRequest =
+                serde_json::from_str(&read_testdata_to_string("github_close_pr_forked.json"))
+                    .unwrap();
+            let _pr_handle = PrHandle::new(&pr).unwrap();
+        });
+    }
 }
