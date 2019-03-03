@@ -149,10 +149,7 @@ impl RepositoryExt for Repository {
             "git@gitlab.com:{}.git",
             get_gitlab_repo_name(&pr_handle.base_full_name)
         );
-        let gitlab_refspec = format!(
-            "refs/heads/{}/{}:refs/heads/{}/{}",
-            pr_handle.gitlab_remote, pr_handle.gitref, pr_handle.gitlab_remote, pr_handle.gitref
-        );
+        let gitlab_refspec = "refs/heads/master:refs/heads/master".to_string();
         self.remote_add_push(&pr_handle.gitlab_remote, &gitlab_refspec)?;
         self.remote_set_url(&pr_handle.gitlab_remote, &gitlab_url)?;
         Ok(())
@@ -265,12 +262,31 @@ fn clone_repo(url: &str) -> Result<RepoData, GitError> {
         }
     }
 }
+fn handle_pr_closed_with_repo(
+    repo: &mut RepositoryExt,
+    pr: &github::PullRequest,
+) -> Result<String, GitError> {
+    let pr_handle = PrHandle::new(pr)?;
+
+    info!("pr_handle={:#?}", pr_handle);
+
+    repo.add_remotes(&pr_handle)?;
+    repo.delete_pr_ref(&pr_handle)?;
+
+    Ok(String::from("deleted :D"))
+}
 
 fn handle_pr_closed(pr: &github::PullRequest) -> Result<String, GitError> {
     info!("Handling closed PR");
-    let _pr_handle = PrHandle::new(pr)?;
+    let url = pr.repository.as_ref()?.ssh_url.as_ref()?;
+    let mut repos = REPOS.lock();
+    let repo_data = repos
+        .as_mut()
+        .unwrap()
+        .entry(url.clone())
+        .or_insert(clone_repo(url)?);
 
-    Ok(String::from(":D"))
+    handle_pr_closed_with_repo(&mut repo_data.repo, pr)
 }
 
 fn handle_pr_updated(pr: &github::PullRequest) -> Result<String, GitError> {
