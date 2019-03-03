@@ -377,15 +377,6 @@ mod test {
                 serde_json::from_str(&read_testdata_to_string("github_open_pull_request.json"))
                     .unwrap();
             let _pr_handle = PrHandle::new(&pr).unwrap();
-            // let scenario = Scenario::new();
-            // let mut cond = scenario.create_mock_for::<RepositoryExt>();
-
-            // scenario.expect(cond.fetch_github_remote_call(&pr_handle).and_return(Ok(())));
-            // scenario.expect(cond.push_pr_ref_call(&pr_handle).and_return(Ok(())));
-
-            // let result = handle_pr_updated_with_repo(&mut cond, &pr);
-            // info!("result={:?}", result);
-            // assert!(result.is_ok());
         });
     }
 
@@ -397,15 +388,6 @@ mod test {
                 serde_json::from_str(&read_testdata_to_string("github_reopen_pull_request.json"))
                     .unwrap();
             let _pr_handle = PrHandle::new(&pr).unwrap();
-            // let scenario = Scenario::new();
-            // let mut cond = scenario.create_mock_for::<RepositoryExt>();
-
-            // scenario.expect(cond.fetch_github_remote_call(&pr_handle).and_return(Ok(())));
-            // scenario.expect(cond.push_pr_ref_call(&pr_handle).and_return(Ok(())));
-
-            // let result = handle_pr_updated_with_repo(&mut cond, &pr);
-            // info!("result={:?}", result);
-            // assert!(result.is_ok());
         });
     }
 
@@ -417,15 +399,6 @@ mod test {
                 serde_json::from_str(&read_testdata_to_string("github_open_pr_forked.json"))
                     .unwrap();
             let _pr_handle = PrHandle::new(&pr).unwrap();
-            // let scenario = Scenario::new();
-            // let mut cond = scenario.create_mock_for::<RepositoryExt>();
-
-            // scenario.expect(cond.fetch_github_remote_call(&pr_handle).and_return(Ok(())));
-            // scenario.expect(cond.push_pr_ref_call(&pr_handle).and_return(Ok(())));
-
-            // let result = handle_pr_updated_with_repo(&mut cond, &pr);
-            // info!("result={:?}", result);
-            // assert!(result.is_ok());
         });
     }
 }
