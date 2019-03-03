@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/brndnmtthws/labhub.svg?branch=master)](https://travis-ci.org/brndnmtthws/labhub) [![Coverage Status](https://coveralls.io/repos/github/brndnmtthws/labhub/badge.svg)](https://coveralls.io/github/brndnmtthws/labhub)
+[![pipeline status](https://gitlab.com/brndnmtthws-oss/labhub/badges/master/pipeline.svg)](https://gitlab.com/brndnmtthws-oss/labhub/commits/master) [![Build Status](https://travis-ci.org/brndnmtthws/labhub.svg?branch=master)](https://travis-ci.org/brndnmtthws/labhub) [![Coverage Status](https://coveralls.io/repos/github/brndnmtthws/labhub/badge.svg)](https://coveralls.io/github/brndnmtthws/labhub)
 
 # LabHub 🤖
 
