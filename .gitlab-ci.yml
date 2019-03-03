@@ -37,9 +37,10 @@ dependencies:
   script:
     - >
       docker build -f Dockerfile.builder
-      --cache-from $CI_REGISTRY_IMAGE:latest
+      --cache-from $CI_REGISTRY_IMAGE/builder:latest
       --cache-from rustlang/rust:nightly
       --tag $CI_REGISTRY_IMAGE/builder:latest
+      .
     - docker push $CI_REGISTRY_IMAGE/builder:latest
 
 build:
