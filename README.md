@@ -10,6 +10,10 @@ A GitHub bot written in Rust for using GitLab CI in OSS projects.
 - Pushes new branches to GitLab for external (forked) PRs
 - Possibly more coming soon 👻
 
+Not implemented:
+
+- No periodic reconciling of GitLab branches with open PRs: if a webhook is missed for any reason, the GitLab pipeline may not correctly reflect the PR state
+
 ## The Problem
 
 GitLab has a great CI system, however it's not suitable for open source projects 😧 (at the time of writing) because it won't build external PRs by default. There are security concerns about the risk of exposing secrets in external builds, and GitLab errs on the side of caution by not building external PRs by default.
