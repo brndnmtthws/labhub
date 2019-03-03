@@ -7,8 +7,6 @@ RUN wget -q https://github.com/mozilla/sccache/releases/download/${SCCACHE_VER}/
   && tar xf sccache-${SCCACHE_VER}-x86_64-unknown-linux-musl.tar.gz \
   && cp sccache-${SCCACHE_VER}-x86_64-unknown-linux-musl/sccache /usr/bin
 ENV RUSTC_WRAPPER=sccache
-RUN rustup default nightly-2019-02-25 \
-  && rustup self update \
-  && rustup component add clippy \
+RUN rustup component add clippy \
   && rustup component add rustfmt
 
