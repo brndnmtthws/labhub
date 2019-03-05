@@ -12,9 +12,7 @@ RUN wget -q https://github.com/mozilla/sccache/releases/download/${SCCACHE_VER}/
   && apt-get install -y cmake curl \
   && rm -rf /var/lib/apt/lists/*
 
-RUN rustup toolchain install nightly-2019-02-25 \
-  && rustup default nightly-2019-02-25 \
-  && rustup component add clippy \
+RUN rustup component add clippy \
   && rustup component add rustfmt \
   && rustup target add i686-apple-darwin \
   && rustup target add i686-pc-windows-gnu \
