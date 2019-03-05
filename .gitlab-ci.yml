@@ -158,6 +158,7 @@ cargo publish:
   only:
     - tags
   stage: publish
+  image: $CI_REGISTRY_IMAGE/builder:latest
   script:
     - cargo publish --token $CRATESIO_TOKEN
   dependencies:
@@ -178,6 +179,7 @@ cargo publish:
   only:
     - tags
   stage: publish
+  image: $CI_REGISTRY_IMAGE/builder:latest
   script:
     - set -- $CI_JOB_NAME
     - export TARGET=$1
