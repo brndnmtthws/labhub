@@ -30,7 +30,7 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
           volumeMounts:
-            - name: ssh-keys
+            - name: labhub-ssh-keys
               mountPath: "/etc/ssh-keys"
               readOnly: true
             - name: labhub
@@ -51,9 +51,9 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: ssh-keys
+        - name: labhub-ssh-keys
           secret:
-            secretName: ssh-keys
+            secretName: labhub-ssh-keys
         - name: labhub
           configMap:
             name: {{ template "labhub.fullname" . }}
