@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/brndnmtthws-oss/labhub/badges/master/pipeline.svg)](https://gitlab.com/brndnmtthws-oss/labhub/commits/master) [![Coverage Status](https://coveralls.io/repos/github/brndnmtthws/labhub/badge.svg)](https://coveralls.io/github/brndnmtthws/labhub) [![Current Crates.io Version](https://img.shields.io/crates/v/labhub.svg)](https://crates.io/crates/labhub)
+[![pipeline status](https://gitlab.com/brndnmtthws-oss/labhub/badges/master/pipeline.svg)](https://gitlab.com/brndnmtthws-oss/labhub/commits/master) [![Coverage Status](https://coveralls.io/repos/github/brndnmtthws/labhub/badge.svg?branch=master)](https://coveralls.io/github/brndnmtthws/labhub?branch=master) [![Current Crates.io Version](https://img.shields.io/crates/v/labhub.svg)](https://crates.io/crates/labhub)
 
 # 🤖 LabHub
 
