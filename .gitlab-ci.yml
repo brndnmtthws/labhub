@@ -188,8 +188,9 @@ cargo publish:
     - cp README.md LICENSE $RELEASE_NAME/
     - tar czvf $RELEASE_NAME.tar.gz $RELEASE_NAME
     - echo -n $(shasum -ba 256 "$RELEASE_NAME.tar.gz" | cut -d " " -f 1) > $RELEASE_NAME.tar.gz.sha256
-    - github-deploy upload -u brndnmtthws -r labhub -t $CI_COMMIT_TAG -f RELEASE_NAME.tar.gz
-    - github-deploy upload -u brndnmtthws -r labhub -t $CI_COMMIT_TAG -f RELEASE_NAME.tar.gz.sha256
+    - github-release release -u brndnmtthws -r labhub -t $CI_COMMIT_TAG --name "LabHub $CI_COMMIT_TAG"
+    - github-release upload -u brndnmtthws -r labhub -t $CI_COMMIT_TAG --name $RELEASE_NAME.tar.gz -f $RELEASE_NAME.tar.gz
+    - github-release upload -u brndnmtthws -r labhub -t $CI_COMMIT_TAG --name $RELEASE_NAME.tar.gz.sha256 -f $RELEASE_NAME.tar.gz.sha256
   dependencies:
     - x86_64-unknown-linux-gnu build
   cache:
