@@ -99,6 +99,7 @@ x86_64-unknown-linux-gnu build: *build_script
       if [[ "$TARGET" == "x86_64-unknown-linux-gnu" ]]; then
         cargo tarpaulin -v --ciserver gitlab-ci --coveralls $COVERALLS_TOKEN --exclude-files .cargo/*
       fi
+  coverage: '/(\d+.\d+%) coverage,/'
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
