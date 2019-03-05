@@ -182,9 +182,9 @@ cargo publish:
     - set -- $CI_JOB_NAME
     - export TARGET=$1
     - cargo build --release
-    - RELEASE_NAME="sccache-$CI_COMMIT_TAG-$TARGET"
+    - RELEASE_NAME="labhub-$CI_COMMIT_TAG-$TARGET"
     - mkdir $RELEASE_NAME
-    - cp target/$TARGET/release/labhub $RELEASE_NAME/
+    - cp target/release/labhub $RELEASE_NAME/
     - cp README.md LICENSE $RELEASE_NAME/
     - tar czvf $RELEASE_NAME.tar.gz $RELEASE_NAME
     - echo -n $(shasum -ba 256 "$RELEASE_NAME.tar.gz" | cut -d " " -f 1) > $RELEASE_NAME.tar.gz.sha256
