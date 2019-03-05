@@ -97,7 +97,7 @@ x86_64-unknown-linux-gnu build: *build_script
     - cargo test --verbose --all --target $TARGET
     - |
       if [[ "$TARGET" == "x86_64-unknown-linux-gnu" ]]; then
-        cargo tarpaulin -v --ciserver gitlab-ci --coveralls $COVERALLS_TOKEN --exclude-files .cargo/*
+        cargo tarpaulin --out Xml && bash <(curl -s https://codecov.io/bash)
       fi
   coverage: '/(\d+.\d+%) coverage,/'
   cache:
