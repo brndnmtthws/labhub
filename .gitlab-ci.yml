@@ -157,16 +157,14 @@ cargo publish:
       - api_failure
   only:
     - tags
+  variables:
+    CARGO_HOME: /usr/local/cargo
   stage: publish
   image: $CI_REGISTRY_IMAGE/builder:latest
   script:
     - cargo publish --token $CRATESIO_TOKEN
   dependencies:
     - x86_64-unknown-linux-gnu build
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - .cargo/registry
 
 .github_deploy: &github_deploy
   retry:
