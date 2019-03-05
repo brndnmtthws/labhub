@@ -96,8 +96,8 @@ x86_64-unknown-linux-gnu build: *build_script
     - export TARGET=$1
     - cargo test --verbose --all --target $TARGET
     - |
-      if [[ "$TARGET" == "x86_64-unknown-linux-gnu" && "$CI_COMMIT_TAG" != "" ]]; then
-        cargo tarpaulin --ciserver gitlab-ci --coveralls $COVERALLS_TOKEN
+      if [[ "$TARGET" == "x86_64-unknown-linux-gnu" ]]; then
+        cargo tarpaulin -v --ciserver gitlab-ci --coveralls $COVERALLS_TOKEN --exclude-files .cargo/*
       fi
   cache:
     key: ${CI_COMMIT_REF_SLUG}
