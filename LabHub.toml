@@ -20,3 +20,6 @@ ssh_key = "/path/to/labhub-key.ecdsa"
 [[mappings]]
 github_repo = "brndnmtthws/labhub"
 gitlab_repo = "brndnmtthws-oss/labhub"
+[[mappings]]
+github_repo = "brndnmtthws/conky"
+gitlab_repo = "brndnmtthws-oss/conky"
