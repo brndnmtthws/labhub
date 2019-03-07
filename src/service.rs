@@ -3,7 +3,7 @@ use crate::config;
 use crate::errors;
 use crate::github;
 
-use log::info;
+use log::{debug, info};
 use rocket::data::Data;
 use rocket::response::content;
 use rocket_contrib::json::Json;
@@ -37,6 +37,8 @@ pub fn github_event(
         &signature.0,
         &body,
     )?;
+
+    debug!("body={}", body);
 
     // Handle the event
     Ok(content::Json(github::handle_event_body(

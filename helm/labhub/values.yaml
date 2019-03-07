@@ -54,22 +54,35 @@ labhub_toml: |
   # List of enabled features. At the moment there's only one, so this parameter
   # does nothing. :)
   features = [
-      "external-pr",
+      "external_pr",
+      "commands"
+  ]
+
+  [commands]
+  enabled_commands = [
+      "retry",
   ]
 
   # Settings for GitHub
   [github]
   webhook_secret = "secret"
   username = "ci-user"
-  ssh_key = "/etc/ssh-keys/github"
+  ssh_key = "/etc/ssh-keys/labhub-key.ecdsa"
+  api_token = "token"
+  hostname = "github.com"
 
   # Settings for GitLab
   [gitlab]
   webhook_secret = "secret"
   username = "ci-user"
-  ssh_key = "/etc/ssh-keys/gitlab"
+  ssh_key = "/etc/ssh-keys/labhub-key.ecdsa"
+  api_token = "token"
+  hostname = "gitlab.com"
 
   # List of mappings to/from GitHub & GitLab
   [[mappings]]
   github_repo = "brndnmtthws/labhub"
   gitlab_repo = "brndnmtthws-oss/labhub"
+  [[mappings]]
+  github_repo = "brndnmtthws/conky"
+  gitlab_repo = "brndnmtthws-oss/conky"

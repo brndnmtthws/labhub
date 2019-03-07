@@ -1,4 +1,5 @@
 use crate::api::github_signature;
+use crate::commands;
 
 use rocket::request::Request;
 use rocket::response::content;
@@ -89,6 +90,30 @@ impl From<io::Error> for GitError {
     fn from(error: io::Error) -> Self {
         GitError {
             message: format!("Git error: {:?}", error),
+        }
+    }
+}
+
+impl From<serde_json::error::Error> for GitError {
+    fn from(error: serde_json::error::Error) -> Self {
+        GitError {
+            message: format!("Github serde error: {:?}", error),
+        }
+    }
+}
+
+impl From<reqwest::Error> for GitError {
+    fn from(error: reqwest::Error) -> Self {
+        GitError {
+            message: format!("Git request error: {:?}", error),
+        }
+    }
+}
+
+impl From<commands::CommandError> for GitError {
+    fn from(error: commands::CommandError) -> Self {
+        GitError {
+            message: format!("Git command error: {:?}", error),
         }
     }
 }

@@ -4,17 +4,20 @@
 
 A GitHub bot written in Rust for using GitLab CI in OSS projects.
 
-## ✔️ Features
+## Features
 
 - Listens for webhooks from GitHub
-- Pushes new branches to GitLab for external (forked) PRs
+- Pushes branches to GitLab from external (forked) PRs
+- Accepts commands by way of PR comments
 - Possibly more coming soon 👻
 
-Not implemented:
+### Commands
 
-- No periodic reconciling of GitLab branches with open PRs: if a webhook is missed for any reason, the GitLab pipeline may not correctly reflect the PR state
+Commands can be executed by commenting on a PR with your CI user's login.
 
-## ⁉️ The Problem
+- **`@labhub retry`**: retry a pipeline that has failed
+
+## The Problem
 
 GitLab has a great CI system, however it's not suitable for open source projects 😧 (at the time of writing) because it won't build external PRs by default. There are security concerns about the risk of exposing secrets in external builds, and GitLab errs on the side of caution by not building external PRs by default.
 
@@ -32,7 +35,7 @@ LabHub is currently being used by the following projects:
 
 - [Conky](https://github.com/brndnmtthws/conky)
 
-## 🖥 Compiling
+## Compiling
 
 LabHub requires Rust nightly. To compile using [`rustup`](https://rustup.rs/):
 
@@ -50,7 +53,7 @@ LabHub is configured using [`LabHub.toml`](LabHub.toml). For details, see [src/c
 
 ## 🚀 Deployment
 
-### ↩ Setup Webhooks
+### Setup Webhooks
 
 You'll need to set up webhooks for any repo you wish to enable LabHub for. Currently, only GitHub webhooks are required. To get started, go to `github.com/<org>/<repo>/settings/hooks` and add a new webhook.
 
@@ -61,7 +64,7 @@ Configure the webhook to send PR and push events.
 - Make sure the payload type is `application/json`.
 - [Here's how your webhook should look](docs/github-webhook-config.png)
 
-### 🔑 Create SSH keys
+### Create SSH keys
 
 You'll need a CI user with SSH keys for both GitHub and GitLab. Create an account on both sites (if you don't already have a CI user), and create an SSH key for LabHub:
 
@@ -71,7 +74,24 @@ $ ssh-keygen -f labhub-key.ecdsa -t ecdsa -b 521
 
 Keep `labhub-key.ecdsa` safe, and upload `labhub-key.ecdsa.pub` to both GitHub and GitLab for the CI user.
 
-### ☸️ Deploy to Kubernetes with Helm
+### Create Personal Access Tokens
+
+Create personal access tokens for your CI user on both GitHub, and GitLab. Supply these tokens by setting the `api_token` parameter in `LabHub.toml` for both GitHub and GitLab.
+
+#### Personal Access Token for GitHub
+
+- Go to https://github.com/settings/tokens
+- Click "Generate new token"
+- Give the token a name, and [enable the `repo` scope, like this](docs/github-personal-access-token.png).
+- Save that token to your `LabHub.toml`
+
+#### Personal Access Token for GitLab
+
+- Go to https://gitlab.com/profile/personal_access_tokens
+- Give the token a name, and [enable the `api` scope, like this](docs/gitlab-personal-access-token.png).
+- Save that token to your `LabHub.toml`
+
+### Deploy to Kubernetes with Helm
 
 There's a Helm chart included in this repo, which is the preferred method of deployment. To use you, you must first create the SSH key secrets with kubectl. Assuming your SSH private key is `labhub-key.ecdsa`:
 
@@ -89,3 +109,7 @@ $ cp values.yaml myvalues.yaml
 ### Edit myvalues.yaml to your liking ###
 $ helm upgrade --install labhub . -f myvalues.yaml
 ```
+
+### Not implemented:
+
+- No periodic reconciling of GitLab branches with open PRs: if a webhook is missed for any reason, the GitLab pipeline may not correctly reflect the PR state

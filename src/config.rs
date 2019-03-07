@@ -1,4 +1,5 @@
-// Global configuration values, loaded from the environment
+use crate::commands;
+
 use log::info;
 use std::collections::HashMap;
 use std::env;
@@ -8,12 +9,33 @@ use std::sync::Mutex;
 use toml;
 use yansi::Paint;
 
+#[derive(Debug, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum Feature {
+    ExternalPr,
+    Commands,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub github: Site,
     pub gitlab: Site,
     pub mappings: Vec<Mapping>,
-    pub features: Vec<String>,
+    pub features: Vec<Feature>,
+    pub commands: Commands,
+}
+
+pub fn feature_enabled(feature: &Feature) -> bool {
+    CONFIG.features.contains(&feature)
+}
+
+pub fn command_enabled(command: &commands::CommandAction) -> bool {
+    feature_enabled(&Feature::Commands) && CONFIG.commands.enabled_commands.contains(&command)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Commands {
+    pub enabled_commands: Vec<commands::CommandAction>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -21,6 +43,8 @@ pub struct Site {
     pub webhook_secret: String,
     pub username: String,
     pub ssh_key: String,
+    pub api_token: String,
+    pub hostname: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]

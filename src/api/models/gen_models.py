@@ -39,55 +39,45 @@ def check_for_keywords(key):
     return key
 
 
-def generate_structs_inner(structs, struct_name, key, value):
+def generate_structs(structs, struct_name, key, value, skip=False):
     key_name = check_for_keywords(key)
-    if type(value) is dict:
-        substruct_name = to_camel_case(key_name)
-        structs = generate_structs(
-            structs, struct_name + substruct_name, value)
-        if key_name != key:
-            structs[struct_name].append('#[serde(rename = "{}")]'.format(key))
-        structs[struct_name].append(
-            "pub {}: Option<{}>,".format(key_name, struct_name + substruct_name))
-    elif type(value) is list:
-        if len(value) == 0:
-            # skip empty lists, don't know the type
-            return
-        substruct_name = to_camel_case(key_name)
-        if substruct_name[-1] == 's':
-            substruct_name = substruct_name[:-1]
-        if type(value[0]) == dict:
-            structs[struct_name + substruct_name] = []
-            structs = generate_structs_inner(structs, struct_name + substruct_name,
-                                             substruct_name, value[0])
-            structs[struct_name +
-                    substruct_name] = structs[struct_name + substruct_name][:-1]
-            if key_name != key:
-                structs[struct_name].append(
-                    '#[serde(rename = "{}")]'.format(key))
-            structs[struct_name].append(
-                "pub {}: Option<Vec<{}>>,".format(key_name, struct_name + substruct_name))
-        else:
-            subtype = get_type_for(struct_name, value[0])
-            if key_name != key:
-                structs[struct_name].append(
-                    '#[serde(rename = "{}")]'.format(key))
-            structs[struct_name].append(
-                "pub {}: Option<Vec<{}>>,".format(key_name, subtype))
-    else:
+
+    if struct_name not in structs:
+        structs[struct_name] = []
+
+    if type(value) is not list and type(value) is not dict:
         obj = generate_type(key_name, value)
         if key_name != key:
             structs[struct_name].append('#[serde(rename = "{}")]'.format(key))
         structs[struct_name].append(obj)
-    return structs
+    elif type(value) is list and len(value) > 0 and type(value[0]) is dict:
+        substruct_name = struct_name + to_camel_case(key) + "Item"
+        if struct_name.endswith("s"):
+            substruct_name = struct_name[:-1] + to_camel_case(key) + "Item"
+        for subkey, subvalue in value[0].items():
+            structs = generate_structs(
+                structs, substruct_name, subkey, subvalue)
+        if key_name != key:
+            structs[struct_name].append('#[serde(rename = "{}")]'.format(key))
+        structs[struct_name].append(
+            "pub {}: Option<Vec<{}>>,".format(key_name, substruct_name))
+    elif type(value) is list and len(value) > 0:
+        if key_name != key:
+            structs[struct_name].append('#[serde(rename = "{}")]'.format(key))
+        structs[struct_name].append("pub {}: Option<Vec<{}>>,".format(
+            key_name, get_type_for(key_name, value[0])))
+    elif type(value) is dict:
+        substruct_name = struct_name + to_camel_case(key_name)
+        for subkey, subvalue in value.items():
+            structs = generate_structs(
+                structs, substruct_name, subkey, subvalue)
+        if not skip:
+            if key_name != key:
+                structs[struct_name].append(
+                    '#[serde(rename = "{}")]'.format(key))
+            structs[struct_name].append(
+                "pub {}: Option<{}>,".format(key_name, substruct_name))
 
-
-def generate_structs(structs, struct_name, model):
-    if struct_name in structs.keys():
-        print("'{}' already in struct (duplicate type?)".format(struct_name))
-    structs[struct_name] = []
-    for key, value in model.items():
-        generate_structs_inner(structs, struct_name, key, value)
     return structs
 
 
@@ -100,7 +90,13 @@ def inout(input_json, output_rs, mod_name):
     data = json.load(input_json)
     structs = {}
     for event_type, model in data.items():
-        structs = generate_structs(structs, to_camel_case(event_type), model)
+        if type(model) is dict:
+            for key, value in model.items():
+                structs = generate_structs(
+                    structs, to_camel_case(event_type), key, value)
+        elif type(model) is list:
+            structs = generate_structs(
+                structs, to_camel_case(event_type), event_type, model[0], skip=True)
     template = env.get_template('model.rs.j2')
     output_rs.write(bytearray(template.render(
         mod_name=mod_name, structs=structs), 'utf8'))

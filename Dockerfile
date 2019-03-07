@@ -11,5 +11,6 @@ RUN cd src \
     && rm -rf $HOME/.cargo/git
 
 ENV ROCKET_ENV=production
+ENV RUST_LOG=labhub=info
 
 ENTRYPOINT [ "labhub" ]
