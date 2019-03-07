@@ -1,10 +1,12 @@
 use crate::api::models::github;
+use crate::api::{github_client, gitlab_client};
+use crate::commands;
 use crate::config;
 use crate::errors::{GitError, RequestErrorResult};
 
 use git2::build::RepoBuilder;
 use git2::{FetchOptions, PushOptions, RemoteCallbacks, Repository};
-use log::{debug, error, info};
+use log::{debug, error, info, warn};
 use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Mutex;
@@ -262,6 +264,7 @@ fn clone_repo(url: &str) -> Result<RepoData, GitError> {
         }
     }
 }
+
 fn handle_pr_closed_with_repo(
     repo: &mut RepositoryExt,
     pr: &github::PullRequest,
@@ -319,16 +322,21 @@ fn handle_pr_updated_with_repo(
     Ok(String::from(":)"))
 }
 
+impl github::PullRequest {
+    fn is_fork(&self) -> Result<bool, std::option::NoneError> {
+        Ok(self
+            .pull_request
+            .as_ref()?
+            .head
+            .as_ref()?
+            .repo
+            .as_ref()?
+            .fork?)
+    }
+}
+
 fn handle_pr(pr: github::PullRequest) -> Result<(), RequestErrorResult> {
-    if pr
-        .pull_request
-        .as_ref()?
-        .head
-        .as_ref()?
-        .repo
-        .as_ref()?
-        .fork?
-    {
+    if pr.is_fork()? {
         info!("PR is a fork");
         let result = match pr.action.as_ref()?.as_ref() {
             "closed" => handle_pr_closed(&pr),
@@ -344,6 +352,157 @@ fn handle_pr(pr: github::PullRequest) -> Result<(), RequestErrorResult> {
     Ok(())
 }
 
+fn write_issue_comment(
+    client: &reqwest::Client,
+    ic: &github::IssueComment,
+    body: &str,
+) -> Result<(), GitError> {
+    let repo_full_name = ic.repository.as_ref()?.full_name.as_ref()?;
+    let repo_full_name_parts: Vec<String> = repo_full_name
+        .split('/')
+        .map(std::string::ToString::to_string)
+        .collect();
+    if repo_full_name_parts.len() != 2 {
+        return Err(GitError {
+            message: format!("Invalid repo name {}", repo_full_name),
+        });
+    }
+    github_client::create_issue_comment(
+        client,
+        &repo_full_name_parts[0],
+        &repo_full_name_parts[1],
+        ic.issue.as_ref()?.number?,
+        body,
+    )
+}
+
+fn get_sha(client: &reqwest::Client, ic: &github::IssueComment) -> Result<String, GitError> {
+    let repo_full_name = ic.repository.as_ref()?.full_name.as_ref()?;
+    let repo_full_name_parts: Vec<String> = repo_full_name
+        .split('/')
+        .map(std::string::ToString::to_string)
+        .collect();
+    if repo_full_name_parts.len() != 2 {
+        return Err(GitError {
+            message: format!("Invalid repo name {}", repo_full_name),
+        });
+    }
+    let pr = github_client::get_pull(
+        client,
+        &repo_full_name_parts[0],
+        &repo_full_name_parts[1],
+        ic.issue.as_ref()?.number?,
+    )?;
+    Ok(pr.head.as_ref()?.sha.as_ref()?.clone())
+}
+
+impl github::IssueComment {
+    fn is_from_pr(&self) -> Result<bool, std::option::NoneError> {
+        Ok(self.issue.as_ref()?.pull_request.is_some())
+    }
+}
+
+fn find_pipeline_id(client: &reqwest::Client, project: &str, sha: &str) -> Result<i64, GitError> {
+    let mut result_len = 100;
+    let mut page = 1;
+    while result_len == 100 {
+        let pipelines = gitlab_client::get_pipelines(client, project, page, 100)?;
+        let pipeline = pipelines
+            .iter()
+            .filter(|p| p.sha.is_some() && p.id.is_some())
+            .find(|p| p.sha.as_ref().unwrap() == sha);
+        if pipeline.is_some() {
+            return Ok(pipeline.unwrap().id.unwrap());
+        }
+        result_len = pipelines.len();
+        page += 1;
+    }
+    Err(GitError {
+        message: format!(
+            "Unable to find pipeline for project={} sha={}",
+            project, sha
+        ),
+    })
+}
+
+fn handle_retry_command(
+    client: &reqwest::Client,
+    ic: &github::IssueComment,
+) -> Result<(), GitError> {
+    let repo_full_name = ic.repository.as_ref()?.full_name.as_ref()?;
+    let sha = get_sha(&client, ic)?;
+    let project = get_gitlab_repo_name(&repo_full_name);
+    info!("Got retry command for project={} sha={}", project, sha);
+    let pipeline_id = find_pipeline_id(&client, &get_gitlab_repo_name(&project), &sha)?;
+    gitlab_client::retry_pipeline(&client, &project, pipeline_id)?;
+
+    let comment_body = format!(
+        "Sent **retry** command for pipeline [**{}**]({}/pipelines/{}) on [**GitLab**]({})
+
+Have a great day! 😄",
+        pipeline_id,
+        gitlab_client::make_ext_url(&project),
+        pipeline_id,
+        gitlab_client::make_ext_url(&project),
+    );
+
+    write_issue_comment(&client, ic, &comment_body)
+}
+
+fn handle_pr_ic(ic: github::IssueComment) -> Result<(), GitError> {
+    let client = reqwest::Client::new();
+    info!(
+        "Issue comment received for issue number={} action={}",
+        ic.issue.as_ref()?.number?,
+        ic.action.as_ref()?,
+    );
+
+    if ic.sender.as_ref()?.login.as_ref()? == &config::CONFIG.github.username {
+        info!("Hey this is my comment :D Skipping");
+        return Ok(());
+    }
+
+    let command_res = commands::parse_body(
+        ic.comment.as_ref()?.body.as_ref()?,
+        &*config::CONFIG.github.username,
+    );
+
+    if command_res.is_err() {
+        // Provide feedback on PR if necessary
+        let err = command_res.unwrap_err();
+        if err == commands::CommandError::UnknownCommand {
+            // Write a comment on the PR
+            let comment_body = "Sorry, but I don't know what that command means.
+
+Thanks for asking 🥰"
+                .to_string();
+
+            write_issue_comment(&client, &ic, &comment_body)?;
+        }
+        return Ok(());
+    }
+
+    let command = command_res.unwrap();
+
+    if !config::command_enabled(&command.command) {
+        warn!("Command {:#?} is not enabled.", command.command);
+        return Ok(());
+    }
+
+    match command.command {
+        commands::CommandAction::Retry => handle_retry_command(&client, &ic),
+    }
+}
+
+fn handle_ic(ic: github::IssueComment) {
+    if ic.is_from_pr().unwrap() {
+        match handle_pr_ic(ic) {
+            Ok(()) => info!("Finished handling issue comment"),
+            Err(_err) => info!("Ignoring issue comment because it's invalid"),
+        }
+    }
+}
+
 pub fn handle_event_body(event_type: &str, body: &str) -> Result<String, RequestErrorResult> {
     match event_type {
         "push" => {
@@ -352,10 +511,28 @@ pub fn handle_event_body(event_type: &str, body: &str) -> Result<String, Request
             Ok(String::from("Push received 😘"))
         }
         "pull_request" => {
-            let pr: github::PullRequest = serde_json::from_str(body)?;
-            info!("PullRequest action={}", pr.action.as_ref()?);
-            thread::spawn(move || handle_pr(pr));
+            if config::feature_enabled(&config::Feature::ExternalPr) {
+                let pr: github::PullRequest = serde_json::from_str(body)?;
+                info!("PullRequest action={}", pr.action.as_ref()?);
+                thread::spawn(move || handle_pr(pr));
+            } else {
+                info!("ExternalPr feature not enabled. Skipping event.");
+            }
             Ok(String::from("Thanks buddy bro 😍"))
+        }
+        "issue_comment" => {
+            if config::feature_enabled(&config::Feature::Commands) {
+                let ic: github::IssueComment = serde_json::from_str(body)?;
+                info!(
+                    "Issue comment action={} user={}",
+                    ic.action.as_ref()?,
+                    ic.issue.as_ref()?.user.as_ref()?.login.as_ref()?
+                );
+                thread::spawn(move || handle_ic(ic));
+            } else {
+                info!("Commands feature not enabled. Skipping event.");
+            }
+            Ok(String::from("Issue comment received 🥳"))
         }
         _ => Ok(format!(
             "Unhandled event_type={}, doing nothing 😀",
@@ -376,6 +553,7 @@ mod test {
             let pr: github::PullRequest =
                 serde_json::from_str(&read_testdata_to_string("github_open_pull_request.json"))
                     .unwrap();
+            assert_eq!(pr.is_fork().unwrap(), false);
             let _pr_handle = PrHandle::new(&pr).unwrap();
         });
     }
@@ -387,6 +565,7 @@ mod test {
             let pr: github::PullRequest =
                 serde_json::from_str(&read_testdata_to_string("github_reopen_pull_request.json"))
                     .unwrap();
+            assert_eq!(pr.is_fork().unwrap(), false);
             let _pr_handle = PrHandle::new(&pr).unwrap();
         });
     }
@@ -398,6 +577,7 @@ mod test {
             let pr: github::PullRequest =
                 serde_json::from_str(&read_testdata_to_string("github_open_pr_forked.json"))
                     .unwrap();
+            assert_eq!(pr.is_fork().unwrap(), true);
             let _pr_handle = PrHandle::new(&pr).unwrap();
         });
     }
@@ -410,6 +590,26 @@ mod test {
                 serde_json::from_str(&read_testdata_to_string("github_close_pr_forked.json"))
                     .unwrap();
             let _pr_handle = PrHandle::new(&pr).unwrap();
+        });
+    }
+
+    #[test]
+    fn get_pr() {
+        run_test(|| {
+            info!("get_pr test");
+            let _pr: github::RepoPr =
+                serde_json::from_str(&read_testdata_to_string("github_get_pr.json")).unwrap();
+        });
+    }
+
+    #[test]
+    fn created_issue_comment() {
+        run_test(|| {
+            info!("created_issue_comment test");
+            let _ic: github::IssueComment = serde_json::from_str(&read_testdata_to_string(
+                "github_created_issue_comment.json",
+            ))
+            .unwrap();
         });
     }
 }

@@ -1,0 +1,9 @@
+{
+    "pipeline": {
+        "id": 47,
+        "status": "pending",
+        "ref": "new-pipeline",
+        "sha": "a91957a858320c0e17f3a0eca7cfacbff50ea29a",
+        "web_url": "https://example.com/foo/bar/pipelines/47"
+    }
+}

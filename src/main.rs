@@ -9,13 +9,18 @@ extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
 extern crate futures;
+extern crate regex;
+extern crate reqwest;
 extern crate toml;
+extern crate url;
 
 mod api;
+mod commands;
 mod config;
 mod errors;
-pub mod github;
+mod github;
 mod service;
+
 #[cfg(test)]
 mod testing;
 
