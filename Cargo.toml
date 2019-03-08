@@ -11,7 +11,7 @@ repository = "https://github.com/brndnmtthws/labhub"
 version = "0.1.4"
 
 [badges]
-travis-ci = { repository = "brndnmtthws/labhub", branch = "master" }
+gitlab = { repository = "brndnmtthws-oss/labhub", branch = "master" }
 
 [dependencies]
 futures = "0.1"
