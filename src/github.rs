@@ -201,7 +201,7 @@ impl RepositoryExt for Repository {
         push_options.remote_callbacks(get_remote_callbacks(&config::CONFIG.gitlab));
 
         let refspec = format!(
-            "refs/heads/pr-{}/{}/{}:refs/heads/pr-{}/{}/{}",
+            "+refs/heads/pr-{}/{}/{}:refs/heads/pr-{}/{}/{}",
             pr_handle.pr_number,
             pr_handle.head_full_name,
             pr_handle.gitref,
