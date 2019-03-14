@@ -1,9 +1,10 @@
-[![pipeline status](https://gitlab.com/brndnmtthws-oss/labhub/badges/master/pipeline.svg)](https://gitlab.com/brndnmtthws-oss/labhub/commits/master) [![codecov](https://codecov.io/gh/brndnmtthws/labhub/branch/master/graph/badge.svg)](https://codecov.io/gh/brndnmtthws/labhub) [![Current Crates.io Version](https://img.shields.io/crates/v/labhub.svg)](https://crates.io/crates/labhub)
+lololtest[![pipeline status](https://gitlab.com/brndnmtthws-oss/labhub/badges/master/pipeline.svg)](https://gitlab.com/brndnmtthws-oss/labhub/commits/master) [![codecov](https://codecov.io/gh/brndnmtthws/labhub/branch/master/graph/badge.svg)](https://codecov.io/gh/brndnmtthws/labhub) [![Current Crates.io Version](https://img.shields.io/crates/v/labhub.svg)](https://crates.io/crates/labhub)
 
 # 🤖 LabHub
 
 A GitHub bot written in Rust for using GitLab CI in OSS projects.
 
+test :D
 ## Features
 
 - Listens for webhooks from GitHub
