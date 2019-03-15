@@ -27,7 +27,7 @@ serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
 tempfile = "3.0"
-toml = "0.4"
+toml = "0.5"
 url = "1.7"
 yansi = "0.5"
 
