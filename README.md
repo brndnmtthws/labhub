@@ -34,6 +34,7 @@ If you're not concerned with leaking secrets, then LabHub may be for you! LabHub
 LabHub is currently being used by the following projects:
 
 - [Conky](https://github.com/brndnmtthws/conky)
+- [DOMjudge](https://github.com/domjudge/domjudge)
 
 ## Compiling
 
