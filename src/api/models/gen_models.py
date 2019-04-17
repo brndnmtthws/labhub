@@ -14,7 +14,11 @@ def to_camel_case(snake_str):
 
 
 def get_type_for(name, value):
-    if name == 'created_at' or name == 'updated_at' or name == 'pushed_at':
+    if name == 'created_at' \
+            or name == 'updated_at' \
+        or name == 'pushed_at' \
+            or name == 'due_on' \
+            or name == 'closed_at':
         return "serde_json::value::Value"
     elif value is None:
         return "String"
