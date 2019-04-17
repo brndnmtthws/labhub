@@ -411,7 +411,7 @@ pub struct PullRequestPullRequest {
     pub body: Option<String>,
     pub created_at: Option<serde_json::value::Value>,
     pub updated_at: Option<serde_json::value::Value>,
-    pub closed_at: Option<String>,
+    pub closed_at: Option<serde_json::value::Value>,
     pub merged_at: Option<String>,
     pub merge_commit_sha: Option<String>,
     pub assignee: Option<String>,
@@ -479,8 +479,8 @@ pub struct PullRequestPullRequestMilestone {
     pub state: Option<String>,
     pub created_at: Option<serde_json::value::Value>,
     pub updated_at: Option<serde_json::value::Value>,
-    pub due_on: Option<String>,
-    pub closed_at: Option<String>,
+    pub due_on: Option<serde_json::value::Value>,
+    pub closed_at: Option<serde_json::value::Value>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -1024,7 +1024,7 @@ pub struct IssueCommentIssue {
     pub comments: Option<i64>,
     pub created_at: Option<serde_json::value::Value>,
     pub updated_at: Option<serde_json::value::Value>,
-    pub closed_at: Option<String>,
+    pub closed_at: Option<serde_json::value::Value>,
     pub author_association: Option<String>,
     pub pull_request: Option<IssueCommentIssuePullRequest>,
     pub body: Option<String>,
@@ -1254,7 +1254,7 @@ pub struct RepoPr {
     pub active_lock_reason: Option<String>,
     pub created_at: Option<serde_json::value::Value>,
     pub updated_at: Option<serde_json::value::Value>,
-    pub closed_at: Option<String>,
+    pub closed_at: Option<serde_json::value::Value>,
     pub merged_at: Option<String>,
     pub merge_commit_sha: Option<String>,
     pub assignee: Option<RepoPrAssignee>,
@@ -1330,8 +1330,8 @@ pub struct RepoPrMilestone {
     pub closed_issues: Option<i64>,
     pub created_at: Option<serde_json::value::Value>,
     pub updated_at: Option<serde_json::value::Value>,
-    pub closed_at: Option<String>,
-    pub due_on: Option<String>,
+    pub closed_at: Option<serde_json::value::Value>,
+    pub due_on: Option<serde_json::value::Value>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
