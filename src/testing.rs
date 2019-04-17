@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::panic;
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 pub fn read_testdata_to_string(filename: &str) -> String {
     let mut datapath = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -15,8 +16,12 @@ pub fn read_testdata_to_string(filename: &str) -> String {
     contents
 }
 
+static LOGGER_INITIALIZED: AtomicBool = AtomicBool::new(false);
+
 fn setup() {
-    env_logger::try_init().is_ok();
+    if !LOGGER_INITIALIZED.compare_and_swap(false, true, Ordering::Relaxed) {
+        env_logger::try_init().expect("Error initializing logger");
+    }
 }
 
 pub fn run_test<T>(test: T)
