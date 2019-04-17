@@ -415,7 +415,7 @@ pub struct PullRequestPullRequest {
     pub merged_at: Option<String>,
     pub merge_commit_sha: Option<String>,
     pub assignee: Option<String>,
-    pub milestone: Option<String>,
+    pub milestone: Option<PullRequestPullRequestMilestone>,
     pub commits_url: Option<String>,
     pub review_comments_url: Option<String>,
     pub review_comment_url: Option<String>,
@@ -442,6 +442,49 @@ pub struct PullRequestPullRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PullRequestPullRequestUser {
+    pub login: Option<String>,
+    pub id: Option<i64>,
+    pub node_id: Option<String>,
+    pub avatar_url: Option<String>,
+    pub gravatar_id: Option<String>,
+    pub url: Option<String>,
+    pub html_url: Option<String>,
+    pub followers_url: Option<String>,
+    pub following_url: Option<String>,
+    pub gists_url: Option<String>,
+    pub starred_url: Option<String>,
+    pub subscriptions_url: Option<String>,
+    pub organizations_url: Option<String>,
+    pub repos_url: Option<String>,
+    pub events_url: Option<String>,
+    pub received_events_url: Option<String>,
+    #[serde(rename = "type")]
+    pub type_key: Option<String>,
+    pub site_admin: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PullRequestPullRequestMilestone {
+    pub url: Option<String>,
+    pub html_url: Option<String>,
+    pub labels_url: Option<String>,
+    pub id: Option<i64>,
+    pub node_id: Option<String>,
+    pub number: Option<i64>,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub creator: Option<PullRequestPullRequestMilestoneCreator>,
+    pub open_issues: Option<i64>,
+    pub closed_issues: Option<i64>,
+    pub state: Option<String>,
+    pub created_at: Option<serde_json::value::Value>,
+    pub updated_at: Option<serde_json::value::Value>,
+    pub due_on: Option<String>,
+    pub closed_at: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PullRequestPullRequestMilestoneCreator {
     pub login: Option<String>,
     pub id: Option<i64>,
     pub node_id: Option<String>,
