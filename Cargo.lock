@@ -606,7 +606,7 @@ dependencies = [
 
 [[package]]
 name = "labhub"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "env_logger 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.26 (registry+https://github.com/rust-lang/crates.io-index)",
