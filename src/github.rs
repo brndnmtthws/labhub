@@ -476,18 +476,18 @@ Thanks for asking 🥰"
                 .to_string();
 
             write_issue_comment(&client, &ic, &comment_body)?;
-            return Ok(());
+            Ok(())
         }
         _ => {
             let command = command_res.unwrap();
 
             if !config::command_enabled(&command.command) {
                 warn!("Command {:#?} is not enabled.", command.command);
-                return Ok(());
-            }
-
-            match command.command {
-                commands::CommandAction::Retry => handle_retry_command(&client, &ic),
+                Ok(())
+            } else {
+                match command.command {
+                    commands::CommandAction::Retry => handle_retry_command(&client, &ic),
+                }
             }
         }
     }
