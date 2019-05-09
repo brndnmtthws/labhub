@@ -467,10 +467,8 @@ fn handle_pr_ic(ic: github::IssueComment) -> Result<(), GitError> {
         &*config::CONFIG.github.username,
     );
 
-    if command_res.is_err() {
-        // Provide feedback on PR if necessary
-        let err = command_res.unwrap_err();
-        if err == commands::CommandError::UnknownCommand {
+    match command_res {
+        Err(commands::CommandError::UnknownCommand) => {
             // Write a comment on the PR
             let comment_body = "Sorry, but I don't know what that command means.
 
@@ -478,19 +476,20 @@ Thanks for asking 🥰"
                 .to_string();
 
             write_issue_comment(&client, &ic, &comment_body)?;
+            return Ok(());
         }
-        return Ok(());
-    }
+        _ => {
+            let command = command_res.unwrap();
 
-    let command = command_res.unwrap();
+            if !config::command_enabled(&command.command) {
+                warn!("Command {:#?} is not enabled.", command.command);
+                return Ok(());
+            }
 
-    if !config::command_enabled(&command.command) {
-        warn!("Command {:#?} is not enabled.", command.command);
-        return Ok(());
-    }
-
-    match command.command {
-        commands::CommandAction::Retry => handle_retry_command(&client, &ic),
+            match command.command {
+                commands::CommandAction::Retry => handle_retry_command(&client, &ic),
+            }
+        }
     }
 }
 

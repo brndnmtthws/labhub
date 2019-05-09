@@ -4,13 +4,14 @@ use std::convert::TryFrom;
 fn tokenize_comment(body: &str) -> Vec<&str> {
     body.split_whitespace().collect()
 }
+
 #[derive(Debug, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum CommandAction {
     Retry,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Command {
     pub username: String,
     pub command: CommandAction,
@@ -25,20 +26,8 @@ pub enum CommandError {
     InvalidFormat,
 }
 
-impl Command {
-    fn is_valid(&self, username: &str) -> Result<(), CommandError> {
-        if self.username == username {
-            Ok(())
-        } else {
-            Err(CommandError::BadUsername)
-        }
-    }
-}
-
 pub fn parse_body(body: &str, for_username: &str) -> Result<Command, CommandError> {
-    let command = Command::try_from(body)?;
-    command.is_valid(for_username)?;
-    Ok(command)
+    Command::parse_from(body, for_username)
 }
 
 impl TryFrom<&str> for CommandAction {
@@ -51,10 +40,8 @@ impl TryFrom<&str> for CommandAction {
     }
 }
 
-impl TryFrom<&str> for Command {
-    type Error = CommandError;
-
-    fn try_from(body: &str) -> Result<Self, Self::Error> {
+impl Command {
+    fn parse_from(body: &str, for_username: &str) -> Result<Self, CommandError> {
         let tokens = tokenize_comment(body);
         if tokens.len() < 2 {
             return Err(CommandError::InvalidLength);
@@ -64,7 +51,14 @@ impl TryFrom<&str> for Command {
         }
         Ok(Command {
             username: match RE.captures(tokens[0]) {
-                Some(cap) => cap[1].to_string(),
+                Some(cap) => {
+                    let username = cap[1].to_string();
+                    if username != for_username {
+                        return Err(CommandError::BadUsername);
+                    } else {
+                        username
+                    }
+                }
                 _ => return Err(CommandError::InvalidFormat),
             },
             command: CommandAction::try_from(tokens[1])?,
@@ -99,23 +93,25 @@ mod test {
     fn test_from_string() {
         run_test(|| {
             assert_eq!(
-                Command::try_from("lol").unwrap_err(),
+                Command::parse_from("lol", "bot").unwrap_err(),
                 CommandError::InvalidLength
             );
             assert_eq!(
-                Command::try_from("herp derp nerp").unwrap_err(),
+                Command::parse_from("herp derp nerp", "bot").unwrap_err(),
                 CommandError::InvalidFormat
             );
             assert_eq!(
-                Command::try_from("@bot derp nerp").unwrap_err(),
+                Command::parse_from("@bot derp nerp", "bot").unwrap_err(),
                 CommandError::UnknownCommand
             );
             assert_eq!(
-                Command::try_from("@bot retry nerp").unwrap().command,
+                Command::parse_from("@bot retry nerp", "bot")
+                    .unwrap()
+                    .command,
                 CommandAction::Retry
             );
             assert_eq!(
-                Command::try_from("@bot retry nerp").unwrap().args,
+                Command::parse_from("@bot retry nerp", "bot").unwrap().args,
                 vec!["nerp"]
             );
         });
@@ -124,9 +120,25 @@ mod test {
     #[test]
     fn test_is_valid() {
         run_test(|| {
-            let command = Command::try_from("@bot retry nerp").unwrap();
-            assert_eq!(command.is_valid("bot").is_ok(), true);
-            assert_eq!(command.is_valid("not").is_err(), true);
+            let command = Command::parse_from("@bot retry nerp", "bot");
+            assert_eq!(command.is_ok(), true);
+            assert_eq!(
+                command.ok(),
+                Some(Command {
+                    username: "bot".into(),
+                    command: CommandAction::Retry,
+                    args: vec!["nerp".to_string()]
+                })
+            );
+        });
+    }
+
+    #[test]
+    fn test_wrong_username() {
+        run_test(|| {
+            let command = Command::parse_from("@not retry nerp", "bot");
+            assert_eq!(command.is_err(), true);
+            assert_eq!(command.err(), Some(CommandError::BadUsername));
         });
     }
 
