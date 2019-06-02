@@ -266,7 +266,7 @@ fn clone_repo(url: &str) -> Result<RepoData, GitError> {
 }
 
 fn handle_pr_closed_with_repo(
-    repo: &mut RepositoryExt,
+    repo: &mut dyn RepositoryExt,
     pr: &github::PullRequest,
 ) -> Result<String, GitError> {
     let pr_handle = PrHandle::new(pr)?;
@@ -306,7 +306,7 @@ fn handle_pr_updated(pr: &github::PullRequest) -> Result<String, GitError> {
 }
 
 fn handle_pr_updated_with_repo(
-    repo: &mut RepositoryExt,
+    repo: &mut dyn RepositoryExt,
     pr: &github::PullRequest,
 ) -> Result<String, GitError> {
     info!("handle_pr_updated_with_repo");
