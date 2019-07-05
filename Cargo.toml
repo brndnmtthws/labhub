@@ -37,6 +37,6 @@ features = ["json"]
 version = "0.4"
 
 [dev-dependencies]
-mockers = "0.20"
+mockers = "0.21"
 mockers_derive = "0.21"
 env_logger = { version = "0.6", default-features = false }
