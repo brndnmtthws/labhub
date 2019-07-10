@@ -146,9 +146,13 @@ impl RepositoryExt for Repository {
         let github_refspec = format!("+refs/heads/*:refs/remotes/{}/*", pr_handle.github_remote);
         self.remote_add_fetch(&pr_handle.github_remote, &github_refspec)?;
         self.remote_set_url(&pr_handle.github_remote, &pr_handle.github_clone_url)?;
-
+        let hostname = match config::CONFIG.gitlab.hostname.as_ref() {
+            Some(hostname) => hostname.clone(),
+            _ => "gitlab.com".to_string(),
+        };
         let gitlab_url = format!(
-            "git@gitlab.com:{}.git",
+            "git@{}:{}.git",
+            hostname,
             get_gitlab_repo_name(&pr_handle.base_full_name)
         );
         let gitlab_refspec = "refs/heads/master:refs/heads/master".to_string();
