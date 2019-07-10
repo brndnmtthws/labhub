@@ -712,8 +712,8 @@
       "author_association": "OWNER",
       "draft": false,
       "merged": false,
-      "mergeable": null,
-      "rebaseable": null,
+      "mergeable": true,
+      "rebaseable": true,
       "mergeable_state": "unknown",
       "merged_by": {
         "login": "brndnmtthws",
