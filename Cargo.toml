@@ -8,7 +8,7 @@ license = "Unlicense"
 name = "labhub"
 readme = "README.md"
 repository = "https://github.com/brndnmtthws/labhub"
-version = "0.1.10"
+version = "0.1.11"
 
 [badges]
 gitlab = { repository = "brndnmtthws-oss/labhub", branch = "master" }
