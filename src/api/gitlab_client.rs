@@ -4,7 +4,7 @@ use crate::errors::GitError;
 
 use log::error;
 use reqwest;
-use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 
 fn headers(token: &str) -> reqwest::header::HeaderMap {
     let token_header = reqwest::header::HeaderName::from_static("private-token");
@@ -29,7 +29,8 @@ fn make_api_url(project: &str) -> String {
         Some(hostname) => hostname.clone(),
         _ => "gitlab.com".to_string(),
     };
-    let project = utf8_percent_encode(project, PATH_SEGMENT_ENCODE_SET).to_string();
+    const FRAGMENT: &AsciiSet = &CONTROLS.add(b'/').add(b'%');
+    let project = utf8_percent_encode(project, FRAGMENT).to_string();
     format!("https://{}/api/v4/projects/{}", hostname, project)
 }
 
