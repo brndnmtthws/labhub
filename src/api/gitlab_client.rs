@@ -3,8 +3,8 @@ use crate::config;
 use crate::errors::GitError;
 
 use log::error;
-use reqwest;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+use reqwest;
 
 fn headers(token: &str) -> reqwest::header::HeaderMap {
     let token_header = reqwest::header::HeaderName::from_static("private-token");
