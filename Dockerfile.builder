@@ -2,7 +2,7 @@ FROM rustlang/rust:nightly
 
 WORKDIR /labhub
 
-ENV SCCACHE_VER=0.2.8
+ENV SCCACHE_VER=0.2.10
 ENV GITHUB_RELEASE_VER=v0.7.2
 
 RUN wget -q https://github.com/mozilla/sccache/releases/download/${SCCACHE_VER}/sccache-${SCCACHE_VER}-x86_64-unknown-linux-musl.tar.gz -O sccache-${SCCACHE_VER}-x86_64-unknown-linux-musl.tar.gz \
