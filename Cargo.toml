@@ -17,7 +17,7 @@ gitlab = { repository = "brndnmtthws-oss/labhub", branch = "master" }
 futures = "0.1"
 git2 = "0.9"
 hex = "0.3"
-lazy_static = "1.3"
+lazy_static = "1.4"
 log = "0.4"
 percent-encoding = "2.1"
 regex = "1"
