@@ -61,7 +61,7 @@ You'll need to set up webhooks for any repo you wish to enable LabHub for. Curre
 Configure the webhook to send PR and push events.
 
 - Set the payload URL path to `/github/events`, which is the path LabHub is expecting for GitHub events.
-- Create a secrete (ex: `cat /dev/urandom | LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`) and set the same value in the webhook config as in LabHub.
+- Create a secret (ex: `cat /dev/urandom | LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`) and set the same value in the webhook config as in LabHub.
 - Make sure the payload type is `application/json`.
 - [Here's how your webhook should look](docs/github-webhook-config.png)
 
