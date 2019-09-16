@@ -415,8 +415,8 @@ fn find_pipeline_id(client: &reqwest::Client, project: &str, sha: &str) -> Resul
             .iter()
             .filter(|p| p.sha.is_some() && p.id.is_some())
             .find(|p| p.sha.as_ref().unwrap() == sha);
-        if pipeline.is_some() {
-            return Ok(pipeline.unwrap().id.unwrap());
+        if let Some(pipeline) = pipeline {
+            return Ok(pipeline.id.unwrap());
         }
         result_len = pipelines.len();
         page += 1;
