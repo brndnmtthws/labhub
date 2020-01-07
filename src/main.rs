@@ -20,6 +20,7 @@ mod config;
 mod errors;
 mod github;
 mod service;
+mod actions;
 
 #[cfg(test)]
 mod testing;

@@ -34,3 +34,23 @@ gitlab_repo = "brndnmtthws-oss/labhub"
 [[mappings]]
 github_repo = "brndnmtthws/conky"
 gitlab_repo = "brndnmtthws-oss/conky"
+
+# pull request event trigger actions
+[actions]
+# list of enabled actions
+enabled_actions = [
+    "assigned",
+    "closed",
+    "edited",
+    "labeled",
+    "locked",
+    "opened",
+    "ready_for_review",
+    "reopened",
+    "review_requested",
+    "review_request_removed",
+    "synchronize",
+    "unassigned",
+    "unlabeled",
+    "unlocked",
+]
