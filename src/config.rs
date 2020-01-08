@@ -34,8 +34,8 @@ pub fn command_enabled(command: &commands::CommandAction) -> bool {
     feature_enabled(&Feature::Commands) && CONFIG.commands.enabled_commands.contains(&command)
 }
 
-pub fn action_enabled(action: &String) -> bool {
-    CONFIG.actions.enabled_actions.contains(&action)
+pub fn action_enabled(action: &str) -> bool {
+    CONFIG.actions.enabled_actions.contains(&action.to_string())
 }
 
 #[derive(Debug, Deserialize)]
