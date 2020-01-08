@@ -1,4 +1,3 @@
-
 #[derive(Debug, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ActionValue {
