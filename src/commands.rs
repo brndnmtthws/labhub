@@ -53,7 +53,7 @@ impl Command {
             username: match RE.captures(tokens[0]) {
                 Some(cap) => {
                     let username = cap[1].to_string();
-                    if username != for_username {
+                    if username != "labhub" && username != for_username {
                         return Err(CommandError::BadUsername);
                     } else {
                         username
@@ -147,6 +147,11 @@ mod test {
         run_test(|| {
             assert_eq!(
                 parse_body("@bot retry nerp", "bot").unwrap().command,
+                CommandAction::Retry
+            );
+            // Allow use of @labhub always
+            assert_eq!(
+                parse_body("@labhub retry nerp", "bot").unwrap().command,
                 CommandAction::Retry
             );
             assert_eq!(
