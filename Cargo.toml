@@ -14,7 +14,7 @@ version = "0.1.11"
 gitlab = { repository = "brndnmtthws-oss/labhub", branch = "master" }
 
 [dependencies]
-futures = "0.1"
+futures = "0.3"
 git2 = "0.13"
 hex = "0.4"
 lazy_static = "1.3"
