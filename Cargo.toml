@@ -40,4 +40,4 @@ version = "0.4"
 [dev-dependencies]
 mockers = "0.21"
 mockers_derive = "0.21"
-env_logger = { version = "0.7", default-features = false }
+env_logger = { version = "0.8", default-features = false }
