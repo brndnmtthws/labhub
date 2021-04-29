@@ -1,0 +1,45 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - brndnmtthws
+  ignore:
+  - dependency-name: reqwest
+    versions:
+    - 0.11.0
+    - 0.11.1
+    - 0.11.2
+  - dependency-name: serde_derive
+    versions:
+    - 1.0.123
+    - 1.0.124
+  - dependency-name: serde
+    versions:
+    - 1.0.123
+    - 1.0.124
+  - dependency-name: serde_json
+    versions:
+    - 1.0.61
+    - 1.0.62
+    - 1.0.63
+  - dependency-name: futures
+    versions:
+    - 0.3.12
+    - 0.3.13
+  - dependency-name: git2
+    versions:
+    - 0.13.17
+  - dependency-name: env_logger
+    versions:
+    - 0.8.2
+  - dependency-name: rocket_contrib
+    versions:
+    - 0.4.6
+  - dependency-name: rocket
+    versions:
+    - 0.4.6
