@@ -513,7 +513,7 @@ dependencies = [
  "log 0.4.17",
  "openssl-probe",
  "openssl-sys",
- "url 2.2.0",
+ "url 2.3.0",
 ]
 
 [[package]]
@@ -833,7 +833,7 @@ dependencies = [
  "serde_json",
  "tempfile",
  "toml 0.5.7",
- "url 2.2.0",
+ "url 2.3.0",
  "yansi",
 ]
 
@@ -1393,7 +1393,7 @@ dependencies = [
  "serde_urlencoded",
  "tokio",
  "tokio-tls",
- "url 2.2.0",
+ "url 2.3.0",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -1580,7 +1580,7 @@ dependencies = [
  "dtoa",
  "itoa",
  "serde",
- "url 2.2.0",
+ "url 2.3.0",
 ]
 
 [[package]]
@@ -1892,13 +1892,12 @@ dependencies = [
 
 [[package]]
 name = "url"
-version = "2.2.0"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5909f2b0817350449ed73e8bcd81c8c3c8d9a7a5d8acba4b27db277f1868976e"
+checksum = "22fe195a4f217c25b25cb5058ced57059824a678474874038dc88d211bf508d3"
 dependencies = [
  "form_urlencoded",
  "idna 0.2.0",
- "matches",
  "percent-encoding 2.1.0",
 ]
 
